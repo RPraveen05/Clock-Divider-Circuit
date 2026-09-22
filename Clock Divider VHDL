@@ -1,0 +1,57 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Clock_Divider is
+    Port ( Clk : in STD_LOGIC;
+           Reset : in STD_LOGIC;
+           Heart_beat : out STD_LOGIC);
+end Clock_Divider;
+
+architecture Behavioral of Clock_Divider is
+
+constant Max_count : integer := 99999999;
+
+signal clk_counter : integer range 0 to Max_count := 0;
+signal clk_enable : std_logic := '0';
+signal led_state : std_logic := '0';
+
+begin
+
+process(Clk, Reset)
+begin
+if Reset = '1' then
+ clk_counter <= 0;
+ clk_enable <= '0';
+elsif rising_edge(Clk) then
+  if Max_count = clk_counter then
+   clk_counter <= 0;
+   clk_enable <= '1';
+  else 
+   clk_counter <= clk_counter + 1;
+   clk_enable <= '0';  
+  end if;
+  end if; 
+  end process; 
+ 
+ process(Clk, Reset)
+ begin
+ if Reset = '1' then
+  led_state <= '0';
+ elsif rising_edge(Clk) then
+  if clk_enable = '1' then
+  led_state <= not led_state;
+  end if;
+  end if;
+  end process;
+ 
+Heart_beat <= led_state;
+end Behavioral;
